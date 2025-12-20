@@ -5,7 +5,7 @@ ML4.py - Iris Dataset Visualization with Pair Plot
 """
 
 # Import Libraries
-import seaborn as sb           # สร้างกราฟสวยๆ (built on matplotlib)
+import seaborn as sb           # สร้างกราฟ (built on matplotlib)
 import matplotlib.pyplot as plt 
 
 # Load Data
