@@ -2,6 +2,15 @@
 Binary Classification ด้วย Stochastic Gradient Descent (SGD)
 =============================================================
 
+สารบัญ (Table of Contents) - อ่านตามลำดับนี้:
+   1. IMPORT LIBRARIES      - นำเข้า library
+   2. HELPER FUNCTIONS      - ฟังก์ชันช่วยเหลือ (ต้องอยู่บนสุดเพราะ Python ต้อง define ก่อนเรียกใช้)
+   3. LOAD DATA             - โหลดข้อมูล MNIST
+   4. SPLIT DATA            - แบ่ง Train/Test
+   5. PREPARE BINARY LABELS - แปลง 0-9 เป็น True/False
+   6. CREATE & TRAIN MODEL  - สร้างและ train โมเดล SGD
+   7. TEST & VISUALIZE      - ทดสอบและแสดงผล + Confusion Matrix
+
 วัตถุประสงค์:
    - สร้างโมเดลที่ทำนายว่ารูปตัวเลขที่ให้มานั้น "ใช่เลข 5" หรือ "ไม่ใช่เลข 5"
    - เป็นการจำแนกแบบ Binary (2 คลาส): True = ใช่เลข 5, False = ไม่ใช่เลข 5
@@ -13,9 +22,23 @@ Binary Classification ด้วย Stochastic Gradient Descent (SGD)
 
 หลักการ SGD (Stochastic Gradient Descent):
    - เป็น optimizer ที่ใช้หาค่า weight ที่ดีที่สุดสำหรับโมเดล
-   - "Stochastic" = สุ่มเลือกข้อมูลทีละตัว (หรือ mini-batch) มา update weight
+   - "Stochastic" = สุ่มเลือกข้อมูลทีละตัวมา update weight
    - ข้อดี: เร็ว, ใช้ memory น้อย, เหมาะกับ dataset ขนาดใหญ่
-   - ข้อเสีย: ผลลัพธ์อาจ fluctuate (ไม่นิ่ง) เพราะสุ่ม
+
+Confusion Matrix คืออะไร? (จะเจอใน Step 7)
+   - ตารางเปรียบเทียบ "ค่าจริง" vs "ค่าทำนาย"
+   
+                        Predicted (โมเดลทำนาย)
+                     | Not 5  |  Is 5  |
+        ---------------------------------
+   Actually | Not 5  |   TN   |   FP   |   <- จริงๆ ไม่ใช่เลข 5
+   (ค่าจริง)| Is 5   |   FN   |   TP   |   <- จริงๆ เป็นเลข 5
+        ---------------------------------
+   
+   - TN (True Negative):  ไม่ใช่ 5 จริง + ทำนายว่าไม่ใช่ 5 = ถูก!
+   - TP (True Positive):  เป็น 5 จริง + ทำนายว่าเป็น 5 = ถูก!
+   - FP (False Positive): ไม่ใช่ 5 จริง + ทำนายว่าเป็น 5 = ผิด! (Type I Error)
+   - FN (False Negative): เป็น 5 จริง + ทำนายว่าไม่ใช่ 5 = ผิด! (Type II Error)
 
 Dataset: MNIST (70,000 รูปตัวเลข 0-9 ขนาด 28x28 pixels)
    - Training: 60,000 รูป (ใช้สอนโมเดล)
@@ -27,9 +50,46 @@ from scipy.io import loadmat          # โหลดไฟล์ .mat (format �
 import numpy as np                     # จัดการ array
 import matplotlib.pyplot as plt        # แสดงรูปภาพ
 from sklearn.linear_model import SGDClassifier  # โมเดล SGD สำหรับ Classification
-
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import cross_val_predict
+import itertools  # ใช้สำหรับ itertools.product() ใน displayConfusionMatrix
 
 # ========================== 2. HELPER FUNCTIONS ==========================
+# ฟังก์ชันช่วยเหลือ - ต้องอยู่บนสุดเพราะ Python ต้อง define ก่อนเรียกใช้
+# (ถึงจะใช้ทีหลัง แต่ต้องเขียนไว้ก่อน)
+
+def displayConfusionMatrix(cm, cmap=plt.cm.GnBu):
+    """
+    แสดง Confusion Matrix เป็นกราฟ heatmap
+    
+    Parameters:
+        cm: Confusion Matrix (2x2 array) จาก sklearn.metrics.confusion_matrix
+        cmap: colormap สำหรับสี (default: GnBu = เขียว-น้ำเงิน)
+    
+    การอ่านกราฟ:
+        - แกน Y (Actually): ค่าจริง
+        - แกน X (Prediction): ค่าที่โมเดลทำนาย
+        - ตัวเลขในช่อง: จำนวนรูป
+        - สียิ่งเข้ม = จำนวนยิ่งมาก
+    """
+    classes=["Other Number","Number 5"]
+    plt.imshow(cm,interpolation='nearest',cmap=cmap)
+    plt.title("Confusion Matrix")
+    plt.colorbar()
+    trick_marks=np.arange(len(classes))
+    plt.xticks(trick_marks,classes)
+    plt.yticks(trick_marks,classes)
+    thresh=cm.max()/2
+    for i , j in itertools.product(range(cm.shape[0]),range(cm.shape[1])):
+        plt.text(j,i,format(cm[i,j],'d'),
+        horizontalalignment='center',
+        color='white' if cm[i,j]>thresh else 'black')
+
+    plt.tight_layout()
+    plt.ylabel('Actually')
+    plt.xlabel('Prediction')
+    plt.show()
 
 def displayImage(x):
     """
@@ -121,7 +181,7 @@ y_test = y[60000:]      # label สำหรับ testing (10000,) ค่า 0-
 
 TARGET_DIGIT = 5  # เลขที่ต้องการทำนาย (เปลี่ยนเป็น 0-9 ได้)
 
-y_train_5 = (y_train == TARGET_DIGIT)  # True ถ้าเป็นเลข 5, False ถ้าไม่ใช่
+y_train_5 = (y_train == TARGET_DIGIT) # True ถ้าเป็นเลข 5, False ถ้าไม่ใช่
 y_test_5 = (y_test == TARGET_DIGIT)
 
 # ตัวอย่างผลลัพธ์ (uncomment เพื่อดู)
@@ -152,17 +212,42 @@ sgd_clf.fit(x_train, y_train_5)  # Train โมเดล!
 
 
 # ========================== 7. TEST & VISUALIZE ==========================
-# เลือกรูปจาก test set มาทดสอบ
+# ทดสอบโมเดลและแสดงผลลัพธ์
 
+# --- 7.1 ทดสอบรูปเดี่ยว (uncomment เพื่อใช้) ---
 predict_number = 5500  # index ของรูปที่ต้องการทดสอบ (0-9999)
 
 # แสดงรูปภาพ
-print(f"\nทดสอบรูปที่ index {predict_number}:")
-print(f"รูปนี้คือเลข: {y_test[predict_number]:.0f}")  # label จริงว่าเป็นเลขอะไร
-displayImage(x_test[predict_number])
+# print(f"\nทดสอบรูปที่ index {predict_number}:")
+# print(f"รูปนี้คือเลข: {y_test[predict_number]:.0f}")  # label จริงว่าเป็นเลขอะไร
+# displayImage(x_test[predict_number])
 
 # แสดงผลการทำนาย
-displayPredict(sgd_clf, y_test_5[predict_number], x_test[predict_number])
+# displayPredict(sgd_clf, y_test_5[predict_number], x_test[predict_number])
+
+# --- 7.2 Cross-Validation ---
+# Cross-Validation (cv=3) หมายถึง:
+#   - แบ่ง training data เป็น 3 ส่วน (folds)
+#   - รอบ 1: ใช้ส่วน 1,2 train → ทดสอบกับส่วน 3
+#   - รอบ 2: ใช้ส่วน 1,3 train → ทดสอบกับส่วน 2
+#   - รอบ 3: ใช้ส่วน 2,3 train → ทดสอบกับส่วน 1
+#   - ได้ผลลัพธ์ที่น่าเชื่อถือกว่าการทดสอบครั้งเดียว
+
+# score = cross_val_score(sgd_clf, x_train, y_train_5, cv=3)
+# print("Cross-validation score:", score)
+
+# --- 7.3 Confusion Matrix ---
+# cross_val_predict: ทำนายทุกรูปใน training set แบบ cross-validation
+y_train_pred = cross_val_predict(sgd_clf, x_train, y_train_5, cv=3)
+
+# สร้าง confusion matrix: เปรียบเทียบค่าจริง (y_train_5) กับค่าทำนาย (y_train_pred)
+cm = confusion_matrix(y_train_5, y_train_pred)
+
+# print(cm)  # แสดงเป็นตัวเลข [[TN, FP], [FN, TP]]
+
+# แสดง confusion matrix เป็นกราฟ
+plt.figure()
+displayConfusionMatrix(cm)
 
 
 # ========================== OPTIONAL: TEST MORE SAMPLES ==========================
