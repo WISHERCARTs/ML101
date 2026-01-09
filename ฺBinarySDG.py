@@ -54,6 +54,8 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import cross_val_predict
 import itertools  # ใช้สำหรับ itertools.product() ใน displayConfusionMatrix
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import cross_val_predict
 
 # ========================== 2. HELPER FUNCTIONS ==========================
 # ฟังก์ชันช่วยเหลือ - ต้องอยู่บนสุดเพราะ Python ต้อง define ก่อนเรียกใช้
@@ -246,9 +248,13 @@ cm = confusion_matrix(y_train_5, y_train_pred)
 # print(cm)  # แสดงเป็นตัวเลข [[TN, FP], [FN, TP]]
 
 # แสดง confusion matrix เป็นกราฟ
-plt.figure()
-displayConfusionMatrix(cm)
+# plt.figure()
+# displayConfusionMatrix(cm)
 
+y_train_pred = cross_val_predict(sgd_clf, x_train, y_train_5, cv=3) # ทำนายทุกรูปใน training set แบบ cross-validation
+cm=confusion_matrix(y_train_5, y_train_pred) # สร้าง confusion matrix
+
+print(cm)   
 
 # ========================== OPTIONAL: TEST MORE SAMPLES ==========================
 # ทดสอบหลายรูปพร้อมกัน (uncomment เพื่อใช้)
