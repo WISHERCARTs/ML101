@@ -54,8 +54,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import cross_val_predict
 import itertools  # ใช้สำหรับ itertools.product() ใน displayConfusionMatrix
-from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import classification_report
 
 # ========================== 2. HELPER FUNCTIONS ==========================
 # ฟังก์ชันช่วยเหลือ - ต้องอยู่บนสุดเพราะ Python ต้อง define ก่อนเรียกใช้
@@ -246,15 +245,26 @@ y_train_pred = cross_val_predict(sgd_clf, x_train, y_train_5, cv=3)
 cm = confusion_matrix(y_train_5, y_train_pred)
 
 # print(cm)  # แสดงเป็นตัวเลข [[TN, FP], [FN, TP]]
+# True Positive (TP) — ทายว่าถูกต้อง แล้วตอบตรงตามที่ทายไว้
+# True Negative (TN) — ทายว่าไม่ถูกต้อง แล้วตอบตรงตามที่ทายไว้
+# False Positive (FP) — ทายว่าถูกต้อง แต่คำตอบคือไม่ถูกต้อง
+# False Negative (FN)- ทายว่าไม่ถูกต้อง แต่คำตอบคือถูกต้อง
 
 # แสดง confusion matrix เป็นกราฟ
 # plt.figure()
 # displayConfusionMatrix(cm)
 
-y_train_pred = cross_val_predict(sgd_clf, x_train, y_train_5, cv=3) # ทำนายทุกรูปใน training set แบบ cross-validation
-cm=confusion_matrix(y_train_5, y_train_pred) # สร้าง confusion matrix
+# confusion_matrix(y_train_5, y_train_pred)
 
-print(cm)   
+# print(cm)
+
+
+
+# classification_report
+y_test_pred = sgd_clf.predict(x_test)
+
+classes = ["Other", "Number 5"]
+print(classification_report(y_test_5, y_test_pred, target_names=classes)) # target_names=classes เพื่อให้แสดงชื่อ class ที่กำหนด
 
 # ========================== OPTIONAL: TEST MORE SAMPLES ==========================
 # ทดสอบหลายรูปพร้อมกัน (uncomment เพื่อใช้)
