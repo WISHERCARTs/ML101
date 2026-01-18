@@ -33,5 +33,3 @@
 See the `/notes` folder for learning notes and summaries.
 
 ---
-
-_*กำลังเรียนรู้ไปเรื่อยๆ - commit ไปพร้อมเรียน! 📖*_
