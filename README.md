@@ -1,6 +1,8 @@
-# 🤖 ML101 - Machine Learning University Course
+# 🤖 ML101 - Machine Learning Self-Learning
 
-> Learning Machine Learning - University Course
+> เรียน Machine Learning ด้วยตัวเองผ่าน YouTube 📺
+>
+> 🎓 Learning from: [Kong Ruksiam](https://www.youtube.com/@KongRuksiam)
 
 ## 📚 Course Topics
 
@@ -32,4 +34,4 @@ See the `/notes` folder for learning notes and summaries.
 
 ---
 
-_Work in progress - committing as I learn! 📖_
+_*กำลังเรียนรู้ไปเรื่อยๆ - commit ไปพร้อมเรียน! 📖*_
