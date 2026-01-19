@@ -2,7 +2,7 @@
 
 > เรียน Machine Learning ด้วยตัวเองผ่าน YouTube 📺
 >
-> 🎓 Learning from: [Kong Ruksiam](https://www.youtube.com/@KongRuksiam)
+> 🎓 Learning from: [Kong Ruksiam](https://www.youtube.com/@KongRuksiamOfficial)
 
 ## 📚 Course Topics
 

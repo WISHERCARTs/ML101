@@ -25,6 +25,7 @@ Target (สิ่งที่ต้องการทำนาย):
 # =========================
 from sklearn.model_selection import train_test_split  # แบ่งข้อมูล train/test
 from sklearn.neighbors import KNeighborsClassifier    # KNN algorithm
+from sklearn.metrics import classification_report, confusion_matrix # accuracy, precision, recall, f1-score, confusion matrix
 import kagglehub      # ดาวน์โหลด dataset จาก Kaggle
 import pandas as pd   # จัดการข้อมูลตาราง
 import os             # จัดการ file path
