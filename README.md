@@ -20,6 +20,7 @@
 | `10_KNN_Iris.py`                 | KNN - Iris            | K-Nearest Neighbors กับ Iris dataset     |
 | `11_KNN-Diabetes.py`             | KNN - Diabetes        | KNN กับ Diabetes dataset                 |
 | `12_Nativebay.py`                | Naive Bayes           | Gaussian Naive Bayes กับ Iris dataset    |
+| `13_NativeBayAdult.py`           | Naive Bayes           | Gaussian Naive Bayes กับ Adult dataset   |
 
 ## 🛠️ Technologies Used
 
