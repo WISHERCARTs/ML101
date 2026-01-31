@@ -38,21 +38,33 @@
 ================================================================================
 """
 
-from sklearn.datasets import make_blobs # make_blobs คือ function ที่สร้างข้อมูลสุ่ม
-from sklearn.decomposition import PCA # PCA คือ function ที่ทำ PCA
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sb
+# ==================== PCA Basic Example ====================
+# ตัวอย่างการใช้ PCA ลดมิติข้อมูลและแสดงผลเป็น Bar Chart
 
+# --- Import Libraries ---
+from sklearn.datasets import make_blobs  # สร้างข้อมูลสุ่มสำหรับทดสอบ
+from sklearn.decomposition import PCA    # ใช้ทำ Principal Component Analysis
+import pandas as pd                       # จัดการ DataFrame
+import matplotlib.pyplot as plt           # สร้างกราฟ
+import seaborn as sb                      # สร้างกราฟสวยๆ
+
+# --- สร้างข้อมูลทดสอบ ---
+# n_samples=100 : จำนวนแถว (ข้อมูล) 100 ตัวอย่าง
+# n_features=10 : จำนวน features (คอลัมน์) 10 มิติ
 x, y = make_blobs(n_samples=100, n_features=10)
+
+# --- ทำ PCA ลดมิติ ---
+# n_components=4 : ลดจาก 10 มิติ เหลือ 4 มิติ
 pca = PCA(n_components=4)
-pca.fit_transform(x)
+pca.fit_transform(x)  # เรียนรู้และแปลงข้อมูล
 
+# --- สร้าง DataFrame แสดง Variance แต่ละ PC ---
+# explained_variance_ratio_ : สัดส่วนความแปรปรวนที่แต่ละ PC อธิบายได้
+df = pd.DataFrame({
+    'var': pca.explained_variance_ratio_,  # ค่า variance ratio
+    'pc': ['pc1', 'pc2', 'pc3', 'pc4']     # ชื่อ component
+})
 
-# print("Shape of x: ", x.shape)
-# print("PCA: ", pca.fit_transform(x).shape) #fit คือ function ที่ทำ PCA และ return ค่าที่ได้
-
-# pca.
-df = pd.DataFrame({'var' : pca.explained_variance_ratio_ , 'pc' : ['pc1', 'pc2', 'pc3', 'pc4']})
-sb.barplot(x='pc', y='var', data=df, color='c')
-plt.show()
+# --- แสดงกราฟ Bar Chart ---
+sb.barplot(x='pc', y='var', data=df, color='c')  # สร้าง bar chart สีฟ้า
+plt.show()  # แสดงกราฟ
