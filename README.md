@@ -22,6 +22,7 @@
 | `12_Nativebay.py`                | Naive Bayes           | Gaussian Naive Bayes กับ Iris dataset    |
 | `13_NativeBayAdult.py`           | Naive Bayes           | Gaussian Naive Bayes กับ Adult dataset   |
 | `14_PCAbasic.py`                 | PCA                   | Principal Component Analysis             |
+| `15_PCAlris.py`                  | PCA + Naive Bayes     | PCA กับ Naive Bayes                      |
 
 ## 🛠️ Technologies Used
 
