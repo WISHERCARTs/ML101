@@ -24,6 +24,8 @@
 | `14_PCAbasic.py`                 | PCA                   | Principal Component Analysis             |
 | `15_PCAlris.py`                  | PCA + Naive Bayes     | PCA กับ Naive Bayes                      |
 | `16_PCAMnist.py`                 | PCA + MNIST           | PCA กับ MNIST dataset                    |
+| `17_KMeans.py`                   | K-Means               | K-Means clustering                       |
+| `18_Faces.py`                    | PCA + SVM             | PCA กับ SVM                              |
 
 ## 🛠️ Technologies Used
 
